@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<false/>
+	<!-- Required now that package.sh signs exclusively with the self-signed
+	     "Clip Local Signing" identity (no Developer ID, ever - see
+	     package.sh). Hardened runtime's Library Validation refuses to load
+	     ANY embedded framework unless the loading binary and the framework
+	     carry the same Apple-issued Team ID - and a self-signed certificate
+	     has no Team ID at all, so without this entitlement Clip fails to
+	     launch outright with "Library not loaded: @rpath/Sparkle.framework/
+	     ...different Team IDs" every single time, even though package.sh
+	     re-signs Sparkle.framework with the exact same certificate as the
+	     app. This is not a workaround for a bug in our signing - it is the
+	     documented, expected entitlement for exactly this shape of app:
+	     self-distributed, not notarized, bundling a framework it also signs
+	     itself. Verified 2026-09-04: without this key the packaged Release
+	     build cannot launch at all; with it, it launches clean. -->
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<true/>
+</dict>
+</plist>

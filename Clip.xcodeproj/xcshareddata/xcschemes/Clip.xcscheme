@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme LastUpgradeVersion="1500" version="1.7">
+   <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES">
+      <BuildActionEntries>
+         <BuildActionEntry buildForTesting="YES" buildForRunning="YES" buildForProfiling="YES" buildForArchiving="YES" buildForAnalyzing="YES">
+            <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="42AEFBAE01D2DFD981F7DA7D" BuildableName="Clip.app" BlueprintName="Clip" ReferencedContainer="container:Clip.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry buildForTesting="YES" buildForRunning="NO" buildForProfiling="NO" buildForArchiving="NO" buildForAnalyzing="NO">
+            <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="686053814833DC6DED7546B9" BuildableName="ClipTests.xctest" BlueprintName="ClipTests" ReferencedContainer="container:Clip.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction buildConfiguration="Testing" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv="NO">
+      <EnvironmentVariables>
+         <EnvironmentVariable key="CLIP_QA_SANDBOX" value="1" isEnabled="YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable key="CLIP_QA_SANDBOX_NAME" value="Clip-Tests" isEnabled="YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
+      <Testables>
+         <TestableReference skipped="NO">
+            <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="686053814833DC6DED7546B9" BuildableName="ClipTests.xctest" BlueprintName="ClipTests" ReferencedContainer="container:Clip.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+   <LaunchAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB">
+      <BuildableProductRunnable runnableDebuggingMode="0">
+         <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="42AEFBAE01D2DFD981F7DA7D" BuildableName="Clip.app" BlueprintName="Clip" ReferencedContainer="container:Clip.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </LaunchAction>
+   <ProfileAction buildConfiguration="Release">
+      <BuildableProductRunnable runnableDebuggingMode="0">
+         <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="42AEFBAE01D2DFD981F7DA7D" BuildableName="Clip.app" BlueprintName="Clip" ReferencedContainer="container:Clip.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction buildConfiguration="Debug">
+   </AnalyzeAction>
+   <ArchiveAction buildConfiguration="Release" revealArchiveInOrganizer="YES">
+   </ArchiveAction>
+</Scheme>

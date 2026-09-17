@@ -1,0 +1,34 @@
+# Clip sync API.
+
+# Apache with CGI or FastCGI drops the Authorization header before PHP sees it.
+# Without this line every authorised call answers 401 while the token is
+# provably correct, and the search starts in entirely the wrong layer.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP:Authorization} ^(.*)$
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
+
+    # Everything that is not a real file goes to the router.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_setenvif.c>
+    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+</IfModule>
+
+# The credentials and the internals are not web resources.
+<FilesMatch "^(config|config\.example)\.php$">
+    Require all denied
+</FilesMatch>
+RedirectMatch 404 ^/clipassets/api/lib/
+
+# purge.php is a cron/CLI script, not an endpoint. It already refuses itself
+# when PHP_SAPI is not "cli"; this denies it a layer earlier, at the server.
+<FilesMatch "^purge\.php$">
+    Require all denied
+</FilesMatch>
+
+# No directory listings anywhere under the API.
+Options -Indexes

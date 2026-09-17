@@ -1,0 +1,12 @@
+# Build output - Xcode-generated, local, never committed.
+# These bake in the developer's home path and must not be published.
+build/
+build-*/
+
+# macOS
+.DS_Store
+
+# SQLite databases (local data, never committed)
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

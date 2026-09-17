@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clip — preview</title>
+<style>
+  :root{
+    --bg:#0d0e1c; --accent:#5c5cff; --accent2:#bf47ff;
+    --card:#1c1e33; --hover:#262a42; --sel:#383a6b; --surface:#171927;
+    --border:#ffffff14; --txt:#fff; --txt2:#ffffffb8; --txt3:#ffffff73;
+    --radius:18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#05060d; color:var(--txt); padding:40px; display:flex; flex-direction:column; gap:36px}
+  h1{font-size:22px; font-weight:700; letter-spacing:.2px}
+  .sub{color:var(--txt3); font-size:13px; margin-top:4px; line-height:1.5}
+  .panel{position:relative; width:760px; height:620px; background:var(--bg); border-radius:24px; overflow:hidden; border:1px solid #ffffff10; box-shadow:0 40px 100px #0009, 0 10px 30px #0007}
+  .glow{position:absolute; inset:-40% -10% auto; height:420px; background:radial-gradient(60% 60% at 30% 30%, #5c5cff40, transparent 70%), radial-gradient(50% 50% at 75% 20%, #bf47ff30, transparent 70%); filter:blur(40px)}
+  .in{position:relative; padding:18px 20px; display:flex; flex-direction:column; height:100%}
+  .search{display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:9px 12px; color:var(--txt3); font-size:14px}
+  .search svg{width:15px;height:15px; stroke:var(--txt3)}
+  .search input{flex:1; background:none; border:none; outline:none; color:var(--txt); font-size:14px}
+  .search span{color:var(--txt3)}
+  .actions{display:flex; gap:8px}
+  .icon-btn{width:34px;height:34px; display:grid; place-items:center; background:var(--surface); border:1px solid var(--border); border-radius:12px; color:var(--txt2)}
+  .icon-btn svg{width:15px;height:15px}
+  .tabs{display:flex; background:var(--surface); border:1px solid var(--border); border-radius:13px; padding:3px; margin-top:14px; gap:4px}
+  .tab{flex:1; text-align:center; padding:8px; font-size:12px; color:var(--txt3); border-radius:10px; display:flex;align-items:center;justify-content:center;gap:6px}
+  .tab.on{background:var(--card); color:var(--txt); font-weight:600; box-shadow:0 2px 8px #0006}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px; overflow:auto; padding-bottom:8px}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; display:flex; flex-direction:column; gap:12px; transition:.15s}
+  .card:hover{background:var(--hover)}
+  .card.sel{background:var(--sel); border-color:#8b8bff88; box-shadow:0 10px 30px #0008}
+  .thumb{background:#262834; border-radius:10px; height:128px; display:grid; place-items:center; overflow:hidden}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .thumb.file{flex-direction:column; gap:8px}
+  .frow{display:flex; align-items:center; gap:8px; width:100%; font-size:12px; color:var(--txt); padding:0 4px}
+  .ficon{width:26px;height:26px; border-radius:7px; background:#5c5cff2b; display:grid;place-items:center}
+  .thumb.url{display:block; padding:12px}
+  .urow{display:flex; gap:10px; align-items:center}
+  .ulink{width:38px;height:38px;border-radius:10px; background:#5c5cff26;display:grid;place-items:center}
+  .urow .tt{color:#9b9bff;font-weight:600;font-size:13px}
+  .urow .uu{color:var(--txt3);font-size:11px;margin-top:2px}
+  .colorrow{display:flex; gap:10px; align-items:center; padding:4px}
+  .swatch{width:44px;height:44px;border-radius:10px;border:1px solid #ffffff22}
+  .hex{font-family:ui-monospace,monospace;font-size:13px;font-weight:600;color:var(--txt)}
+  .chex{color:var(--txt3);font-size:11px}
+  .meta{display:flex;align-items:center; justify-content:space-between; gap:8px}
+  .badges{display:flex; gap:6px; align-items:center}
+  .badge{font-size:9px;font-weight:700;letter-spacing:.5px;padding:3px 6px;border-radius:5px; background:#5c5cff29;color:#a6a6ff}
+  .time{font-size:10px; color:var(--txt3); display:flex; gap:5px; align-items:center}
+  .pin{margin-left:auto; color:var(--txt3)}
+  .pills{display:flex; align-items:center; gap:9px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border)}
+  .pill{width:28px;height:28px; display:grid;place-items:center; background:var(--surface); border:1px solid var(--border); border-radius:9px; font-size:12px; font-weight:700; color:var(--txt2); font-family:ui-monospace,monospace}
+  .spacer{flex:1}
+  .linkbtn{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:8px 12px; color:var(--txt3); font-size:12px; display:flex; gap:6px; align-items:center}
+  .trash{color:#ff6b6b}
+  /* themes strip */
+  .themes{display:flex; gap:12px; flex-wrap:wrap}
+  .th{width:200px; border:1px solid #ffffff14; border-radius:14px; overflow:hidden; background:#12131f}
+  .prev{height:88px; padding:10px; display:flex; flex-direction:column; gap:6px}
+  .prev .bar{display:flex; gap:6px; align-items:center}
+  .prev .mini{flex:1; height:34px; border-radius:8px}
+  .th .nm{display:flex; align-items:center; gap:8px; padding:10px 12px; font-size:13px; font-weight:600}
+  .th .nm svg{width:14px;height:14px}
+  .dot{width:16px;height:16px;border-radius:50%}
+  .check{margin-left:auto;width:16px;height:16px;stroke:#5c5cff}
+  .detail{position:absolute;right:0;top:0;bottom:0;width:360px; background:#12131fff; border-left:1px solid #ffffff12; padding:16px; display:flex;flex-direction:column; gap:14px; box-shadow:-20px 0 50px #0008}
+  .dhead{display:flex; align-items:center; gap:10px}
+  .dnm{font-weight:600; font-size:14px}
+  .dtm{color:var(--txt3);font-size:11px}
+  .dclose{margin-left:auto; width:30px;height:30px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:grid;place-items:center}
+  .dimg{background:#1a1b28;border-radius:12px;height:230px;display:grid;place-items:center;overflow:hidden}
+  .dimg img{width:100%;height:100%;object-fit:contain}
+  .dactions{display:flex; gap:10px; margin-top:auto}
+  .dbtn{flex:1; padding:11px; text-align:center; border-radius:11px; font-size:13px; font-weight:600}
+  .dbtn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border:none}
+  .dbtn.ghost{background:var(--card); border:1px solid var(--border); color:var(--txt)}
+  .dimbtn{width:42px;border-radius:11px;background:var(--card);border:1px solid var(--border);color:var(--txt2);display:grid;place-items:center}
+</style>
+</head>
+<body>
+
+<h1>Clip — visual design preview</h1>
+<p class="sub">This is a static mockup of the real SwiftUI app in <b>Clip.xcodeproj</b>. The gallery is the default view you land on when you press the hotkey (⌘⇧Space). Below: a theme gallery and detail panel.</p>
+
+<!-- Panel : gallery -->
+<div class="panel">
+  <div class="glow"></div>
+  <div class="in">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+      <input placeholder="Search clipboard">
+      <span>⌘F</span>
+      <div class="actions">
+        <div class="icon-btn" title="Pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M5 9l7 7 7-7V4H5z"/></svg></div>
+        <div class="icon-btn" title="Filter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M6 12h12M10 19h4"/></svg></div>
+        <div class="icon-btn" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.14-1.4l2-1.55-2-3.46-2.36.95A7 7 0 0 0 14 5.3L13.6 3h-3.2L10 5.3a7 7 0 0 0-2.5 1.24l-2.36-.95-2 3.46 2 1.55A7 7 0 0 0 5 12c0 .48.05.94.14 1.4l-2 1.55 2 3.46 2.36-.95A7 7 0 0 0 10 18.7l.4 2.3h3.2l.4-2.3a7 7 0 0 0 2.5-1.24l2.36.95 2-3.46-2-1.55c.09-.46.14-.92.14-1.4z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab on"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Gallery</div>
+      <div class="tab"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> List</div>
+    </div>
+
+    <div class="grid">
+      <!-- image card (selected) -->
+      <div class="card sel">
+        <div class="thumb">
+          <svg viewBox="0 0 220 130" width="100%" height="130"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5c5cff"/><stop offset="1" stop-color="#bf47ff"/></linearGradient></defs><rect width="220" height="130" fill="#262834"/><rect width="220" height="130" fill="url(#g1)" opacity=".55"/><text x="110" y="70" fill="#fff" font-size="30" text-anchor="middle">🏞</text></svg>
+        </div>
+        <div class="meta"><div class="badges"><span class="badge">IMG</span><svg class="pin" width="12" height="12" viewBox="0 0 24 24" fill="#5c5cff"><path d="M12 17v5M5 9l7 7 7-7V4H5z"/></svg></div><div class="time">2m · Safari</div></div>
+      </div>
+      <!-- url card -->
+      <div class="card">
+        <div class="thumb url">
+          <div class="urow"><div class="ulink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9b9bff" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></div><div><div class="tt">github.com</div><div class="uu">https://github.com/p0deje/Maccy</div></div></div>
+        </div>
+        <div class="meta"><div class="badges"><span class="badge">URL</span></div><div class="time">5m · Slack</div></div>
+      </div>
+      <!-- file card -->
+      <div class="card">
+        <div class="thumb file">
+          <div class="frow"><div class="ficon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>annual-report.pdf</div>
+          <div class="frow"><div class="ficon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>logo-final.png</div>
+        </div>
+        <div class="meta"><div class="badges"><span class="badge">FILE</span></div><div class="time">18m · Finder</div></div>
+      </div>
+      <!-- color card -->
+      <div class="card">
+        <div class="thumb colorrow"><div class="swatch" style="background:#3ABF6E"></div><div><div class="hex">#3ABF6E</div><div class="chex">Color</div></div></div>
+        <div class="meta"><div class="badges"><span class="badge">COLOR</span></div><div class="time">1h · Sketch</div></div>
+      </div>
+      <!-- text card -->
+      <div class="card">
+        <div class="thumb" style="display:block;padding:12px"><div style="width:26px;height:3px;border-radius:3px;background:#9b9bff;margin-bottom:8px"></div><div style="font-size:13px;color:var(--txt);line-height:1.4">Your verification code for Arena is <b>841 932</b>. Do not share it with anyone.</div></div>
+        <div class="meta"><div class="badges"><span class="badge">TXT</span></div><div class="time">2h · Messages</div></div>
+      </div>
+      <!-- next image -->
+      <div class="card">
+        <div class="thumb"><svg viewBox="0 0 220 130" width="100%" height="130"><rect width="220" height="130" fill="#2b2333"/><rect x="30" y="30" width="160" height="70" rx="8" fill="#ff8868"/><text x="110" y="75" fill="#3a0f1a" font-size="26" text-anchor="middle" font-weight="bold">SALE</text></svg></div>
+        <div class="meta"><div class="badges"><span class="badge">IMG</span></div><div class="time">4h · Photos</div></div>
+      </div>
+    </div>
+
+    <!-- pills -->
+    <div class="pills">
+      <div class="linkbtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Grid</div>
+      <div class="spacer"></div>
+      <div class="pill">1</div><div class="pill">2</div><div class="pill">3</div><div class="pill">4</div><div class="pill">5</div>
+      <div class="spacer"></div>
+      <div class="linkbtn trash"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear</div>
+    </div>
+
+    <!-- detail overlay -->
+    <div class="detail">
+      <div class="dhead">
+        <div class="ulink" style="background:#5c5cff26"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a6a6ff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4-4-8 8"/></svg></div>
+        <div><div class="dnm">Image</div><div class="dtm">2 minutes ago</div></div>
+        <div class="dclose"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg></div>
+      </div>
+      <div class="dimg"><svg viewBox="0 0 300 200" width="100%" height="100%"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f8f"/><stop offset="1" stop-color="#8f3f8f"/></linearGradient></defs><rect width="300" height="200" fill="url(#g2)"/><text x="150" y="105" fill="#fff" font-size="40" text-anchor="middle">📸</text></svg></div>
+      <div class="dactions">
+        <div class="dbtn ghost">Copy</div>
+        <div class="dbtn primary">Paste</div>
+        <div class="dimbtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="#8b8bff"><path d="M12 17v5M5 9l7 7 7-7V4H5z"/></svg></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h1 style="margin-top:8px">Theme gallery (Styles → Themes)</h1>
+<p class="sub">Six built-in themes. Each changes colors, corner radius, spacing, layout and defaults. Pick a theme and the whole panel re-renders instantly.</p>
+<div class="themes">
+  <!-- Aurora -->
+  <div class="th"><div class="prev" style="background:#0d0e1c"><div class="bar"><span class="dot" style="background:#5c5cff"></span><span style="flex:1"></span></div><div style="display:flex;gap:6px"><div class="mini" style="background:#1c1e33"></div><div class="mini" style="background:#262a42"></div><div class="mini" style="background:#171927"></div></div></div><div class="nm"><svg viewBox="0 0 24 24" fill="none" stroke="#5c5cff" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/></svg> Aurora <svg class="check" viewBox="0 0 24 24" fill="none" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg></div></div>
+  <!-- Graphite -->
+  <div class="th"><div class="prev" style="background:#1a1b1c"><div class="bar"><span class="dot" style="background:#0c7dff"></span><span style="flex:1"></span></div><div style="display:flex;gap:6px"><div class="mini" style="background:#292a2b"></div><div class="mini" style="background:#333435"></div><div class="mini" style="background:#202122"></div></div></div><div class="nm"><svg viewBox="0 0 24 24" fill="none" stroke="#0c7dff" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M3 9h18"/></svg> Graphite</div></div>
+  <!-- Neon -->
+  <div class="th"><div class="prev" style="background:#080812"><div class="bar"><span class="dot" style="background:#00ffd9"></span><span style="flex:1"></span></div><div style="display:flex;gap:6px"><div class="mini" style="background:#171726"></div><div class="mini" style="background:#202038"></div><div class="mini" style="background:#0f0f1a"></div></div></div><div class="nm"><svg viewBox="0 0 24 24" fill="none" stroke="#00ffd9" stroke-width="2"><circle cx="12" cy="9" r="4"/><path d="M12 2v2M9 21h6M10 13v8"/></svg> Neon</div></div>
+  <!-- Ivory -->
+  <div class="th"><div class="prev" style="background:#faf7f3"><div class="bar"><span class="dot" style="background:#ff8a4d"></span><span style="flex:1"></span></div><div style="display:flex;gap:6px"><div class="mini" style="background:#ffffff"></div><div class="mini" style="background:#f2efe9"></div><div class="mini" style="background:#f4f1ec"></div></div></div><div class="nm"><svg viewBox="0 0 24 24" fill="none" stroke="#ff8a4d" stroke-width="2"><path d="M2 12h20M12 2v20M4 4l16 16M20 4 4 20"/></svg> Ivory</div></div>
+  <!-- Sage -->
+  <div class="th"><div class="prev" style="background:#151f1a"><div class="bar"><span class="dot" style="background:#5aa673"></span><span style="flex:1"></span></div><div style="display:flex;gap:6px"><div class="mini" style="background:#212e26"></div><div class="mini" style="background:#2b3a30"></div><div class="mini" style="background:#1c2721"></div></div></div><div class="nm"><svg viewBox="0 0 24 24" fill="none" stroke="#5aa673" stroke-width="2"><path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 9-9 0 6-4 7-9 8"/></svg> Sage</div></div>
+  <!-- Coral -->
+  <div class="th"><div class="prev" style="background:#1f171f"><div class="bar"><span class="dot" style="background:#ff6b6b"></span><span style="flex:1"></span></div><div style="display:flex;gap:6px"><div class="mini" style="background:#332430"></div><div class="mini" style="background:#422b3d"></div><div class="mini" style="background:#291829"></div></div></div><div class="nm"><svg viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2"><path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11z"/></svg> Coral</div></div>
+</div>
+
+<script>
+  // make cards clickable to open the detail overlay visually
+  const cards=[...document.querySelectorAll('.card')];
+  const detail=document.querySelector('.detail');
+  function openDetail(c){ cards.forEach(x=>x.classList.remove('sel')); c.classList.add('sel'); detail.style.display='flex'; }
+  cards.forEach(c=>c.addEventListener('click',()=>openDetail(c)));
+  detail.querySelector('.dclose').addEventListener('click',()=>{detail.style.display='none';cards.forEach(x=>x.classList.remove('sel'));});
+</script>
+</body>
+</html>
